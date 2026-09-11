@@ -60,9 +60,12 @@ async function render() {
 
   renderHistory(history);
 
-  const total = Object.values(days).reduce((sum, n) => sum + n, 0);
+  const counts = Object.values(days);
+  const total = counts.reduce((sum, n) => sum + n, 0);
+  const bestDay = counts.length ? Math.max(...counts) : 0;
 
   document.querySelector("#total").textContent = `Total solved: ${total}`;
+  document.querySelector("#bestDay").textContent = `Best day: ${bestDay}`;
 }
 
 render();
