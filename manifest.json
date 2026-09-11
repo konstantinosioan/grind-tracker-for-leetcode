@@ -1,9 +1,9 @@
 {
-    "name": "Grind Tracker for LeetCode",
-    "description": "Track your daily LeetCode solves, hit a daily goal & keep your streak going!",
-    "version": "0.1.0",
-    "manifest_version": 3,
-    "action": {
-        "default_popup": "popup.html"
-    }
+  "name": "Grind Tracker for LeetCode",
+  "description": "Track your daily LeetCode solves, hit a daily goal & keep your streak going!",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html"
+  }
 }
