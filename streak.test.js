@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { currentStreak } from "./streak.js";
+import { currentStreak, recentDays } from "./streak.js";
 
 test("streak 0 when no days logged", () => {
   const days = {};
@@ -47,4 +47,20 @@ test("past missed day breaks streak", () => {
   const result = currentStreak(days, 3, today);
 
   assert.equal(result, 2);
+});
+
+test("returns one entry per day, newest first, with gaps as 0", () => {
+  const days = {
+    "2026-09-11": 3,
+    "2026-09-09": 5,
+  };
+  const today = new Date(2026, 8, 11);
+
+  const result = recentDays(days, today, 3);
+
+  assert.deepEqual(result, [
+    { date: "2026-09-11", count: 3 },
+    { date: "2026-09-10", count: 0 },
+    { date: "2026-09-09", count: 5 },
+  ]);
 });

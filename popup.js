@@ -1,4 +1,7 @@
-import { todayKey, currentStreak } from "./streak.js";
+import { todayKey, currentStreak, recentDays } from "./streak.js";
+
+const DEFAULT_GOAL = 3;
+const RECENT_DAYS = 7;
 
 async function incrementToday() {
   const { days = {} } = await chrome.storage.local.get("days");
@@ -9,17 +12,57 @@ async function incrementToday() {
   await chrome.storage.local.set({ days });
 }
 
+function renderHistory(history) {
+  const ul = document.querySelector("#history");
+  ul.replaceChildren(); // clear to build fresh
+
+  for (const { date, count } of history) {
+    const li = document.createElement("li");
+    li.textContent = `${date}: ${count}`;
+    ul.appendChild(li);
+  }
+}
+
 async function render() {
-  const { days = {} } = await chrome.storage.local.get("days");
-  const count = days[todayKey(new Date())] || 0;
-  const { goal = 3 } = await chrome.storage.local.get("goal");
+  const now = new Date();
+  const stored = await chrome.storage.local.get([
+    "days",
+    "goal",
+    "bestStreak",
+    "startDate",
+  ]);
+  const { days = {}, goal = DEFAULT_GOAL } = stored;
+  let { bestStreak = 0, startDate } = stored;
+  const count = days[todayKey(now)] || 0;
   const progress =
     count >= goal ? `Goal reached - ${count} solved` : `${count} / ${goal}`;
 
   document.querySelector("#progress").textContent = progress;
 
+  const streak = currentStreak(days, goal, now);
+
+  if (streak > bestStreak) {
+    bestStreak = streak;
+    await chrome.storage.local.set({ bestStreak });
+  }
+
   document.querySelector("#streak").textContent =
-    `Streak: ${currentStreak(days, goal, new Date())}`;
+    `Streak: ${streak} · Best: ${bestStreak}`;
+
+  if (!startDate) {
+    startDate = todayKey(now);
+    await chrome.storage.local.set({ startDate });
+  }
+
+  const history = recentDays(days, now, RECENT_DAYS).filter(
+    (d) => d.date >= startDate,
+  );
+
+  renderHistory(history);
+
+  const total = Object.values(days).reduce((sum, n) => sum + n, 0);
+
+  document.querySelector("#total").textContent = `Total solved: ${total}`;
 }
 
 render();
