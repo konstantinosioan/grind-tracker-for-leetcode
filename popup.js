@@ -1,11 +1,4 @@
-function todayKey(date) {
-  const year = date.getFullYear();
-  // + 1 since getMonth() returns a zero-based value
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return year + "-" + month + "-" + day;
-}
+import { todayKey, currentStreak } from "./streak.js";
 
 async function incrementToday() {
   const { days = {} } = await chrome.storage.local.get("days");
@@ -18,9 +11,15 @@ async function incrementToday() {
 
 async function render() {
   const { days = {} } = await chrome.storage.local.get("days");
+  const count = days[todayKey(new Date())] || 0;
+  const { goal = 3 } = await chrome.storage.local.get("goal");
+  const progress =
+    count >= goal ? `Goal reached - ${count} solved` : `${count} / ${goal}`;
 
-  document.querySelector("#count").textContent =
-    days[todayKey(new Date())] || 0;
+  document.querySelector("#progress").textContent = progress;
+
+  document.querySelector("#streak").textContent =
+    `Streak: ${currentStreak(days, goal, new Date())}`;
 }
 
 render();
