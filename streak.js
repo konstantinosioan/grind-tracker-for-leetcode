@@ -25,6 +25,37 @@ export function currentStreak(days, goal, today) {
   return streak;
 }
 
+function isNextDay(prevKey, currKey) {
+  const [year, month, day] = prevKey.split("-");
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+
+  date.setDate(date.getDate() + 1);
+
+  return todayKey(date) === currKey;
+}
+
+export function longestStreak(days, goal) {
+  const sortedProductiveDays = Object.keys(days)
+    .filter((key) => days[key] >= goal)
+    .sort();
+  let run = 0;
+  let best = 0;
+  let prevKey = null;
+
+  for (const key of sortedProductiveDays) {
+    if (prevKey !== null && isNextDay(prevKey, key)) {
+      run++;
+    } else {
+      run = 1;
+    }
+
+    best = Math.max(best, run);
+    prevKey = key;
+  }
+
+  return best;
+}
+
 export function recentDays(days, today, numDays) {
   const result = [];
   const day = new Date(today);

@@ -2,17 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link href="styles.css" rel="stylesheet" />
     <title>Grind Tracker for LeetCode</title>
   </head>
 
-  <body>
+  <body class="popup">
     <h1>Grind Tracker for LeetCode</h1>
-    <button id="add">+1</button>
-    <button id="subtract">-1</button>
     <p id="progress"></p>
+    <div class="bar">
+      <div class="bar-fill" id="barFill"></div>
+    </div>
     <p id="streak"></p>
     <p id="total"></p>
     <p id="bestDay"></p>
+    <div class="counter">
+      <button id="add">+1</button>
+      <button id="subtract">-1</button>
+    </div>
     <ul id="history"></ul>
     <button id="settings">Settings</button>
     <script type="module" src="popup.js"></script>

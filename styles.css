@@ -1,0 +1,167 @@
+:root {
+  --accent: #15803d;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text: #1a1a1a;
+  --surface: #fff;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --hover: #f3f4f6;
+  --radius: 8px;
+  --s2: 8px;
+  --s3: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: var(--s3);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+h1 {
+  margin: 0 0 var(--s3);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+button {
+  font: inherit;
+  padding: var(--s2) var(--s3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--hover);
+}
+
+body.popup {
+  width: 320px;
+}
+
+#progress {
+  margin: 0 0 var(--s2);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+#progress.met {
+  color: var(--accent);
+}
+
+.bar {
+  height: 8px;
+  margin: var(--s2) 0 var(--s3);
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+}
+
+#streak,
+#total,
+#bestDay {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.counter {
+  display: flex;
+  gap: var(--s2);
+  margin-top: var(--s3);
+}
+
+.counter button {
+  flex: 1;
+}
+
+#add {
+  color: var(--surface);
+  background: var(--text);
+  border-color: var(--text);
+}
+
+#add:hover {
+  opacity: 0.9;
+}
+
+#history {
+  margin: var(--s3) 0;
+  padding: 0;
+  list-style: none;
+}
+
+#history li {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--s2) 0;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+#history .empty {
+  justify-content: flex-start;
+  border: none;
+  font-style: italic;
+}
+
+#settings {
+  width: 100%;
+}
+
+body.options {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 320px;
+  padding: var(--s3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.card label {
+  display: block;
+  margin-bottom: var(--s2);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+#goal {
+  width: 100%;
+  margin-bottom: var(--s3);
+  padding: var(--s2);
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.actions {
+  display: flex;
+  gap: var(--s2);
+}
+
+#status {
+  margin: var(--s3) 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 1.5em;
+}

@@ -1,42 +1,66 @@
-import { todayKey, currentStreak, recentDays } from "./streak.js";
+import {
+  todayKey,
+  currentStreak,
+  recentDays,
+  longestStreak,
+} from "./streak.js";
 import { adjustToday } from "./storage.js";
 
 const DEFAULT_GOAL = 3;
 const RECENT_DAYS = 7;
 
+function formatDate(key) {
+  const [year, month, day] = key.split("-");
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+
+  return date.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 function renderHistory(history) {
   const ul = document.querySelector("#history");
   ul.replaceChildren(); // clear to build fresh
 
-  for (const { date, count } of history) {
+  if (history.length === 0) {
     const li = document.createElement("li");
-    li.textContent = `${date}: ${count}`;
+    li.className = "empty";
+    li.textContent = "No problems logged yet.";
+    ul.appendChild(li);
+    return;
+  }
+
+  for (const { date, count } of history) {
+    const dateSpan = document.createElement("span");
+    dateSpan.textContent = formatDate(date);
+    const countSpan = document.createElement("span");
+    countSpan.textContent = `${count}`;
+    const li = document.createElement("li");
+    li.append(dateSpan, countSpan);
     ul.appendChild(li);
   }
 }
 
 async function render() {
   const now = new Date();
-  const stored = await chrome.storage.local.get([
-    "days",
-    "goal",
-    "bestStreak",
-    "startDate",
-  ]);
+  const stored = await chrome.storage.local.get(["days", "goal", "startDate"]);
   const { days = {}, goal = DEFAULT_GOAL } = stored;
-  let { bestStreak = 0, startDate } = stored;
+  let { startDate } = stored;
   const count = days[todayKey(now)] || 0;
   const progress =
-    count >= goal ? `Goal reached - ${count} solved` : `${count} / ${goal}`;
+    count >= goal ? `Goal reached · ${count} solved` : `${count} / ${goal}`;
 
-  document.querySelector("#progress").textContent = progress;
+  const progressEl = document.querySelector("#progress");
+  progressEl.textContent = progress;
+  progressEl.classList.toggle("met", count >= goal);
+
+  const percent = Math.min(count / goal, 1) * 100;
+  document.querySelector("#barFill").style.width = `${percent}%`;
 
   const streak = currentStreak(days, goal, now);
-
-  if (streak > bestStreak) {
-    bestStreak = streak;
-    await chrome.storage.local.set({ bestStreak });
-  }
+  const bestStreak = longestStreak(days, goal);
 
   document.querySelector("#streak").textContent =
     `Streak: ${streak} · Best: ${bestStreak}`;

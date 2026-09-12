@@ -2,16 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link href="styles.css" rel="stylesheet" />
     <title>Grind Tracker for LeetCode - Options</title>
   </head>
 
-  <body>
-    <h1>Settings</h1>
-    <label for="goal">Daily Goal</label>
-    <input type="number" id="goal" min="1" />
-    <button id="save">Save</button>
-    <p id="status"></p>
-    <button id="done">Done</button>
+  <body class="options">
+    <div class="card">
+      <h1>Settings</h1>
+      <label for="goal">Daily Goal</label>
+      <input type="number" id="goal" min="1" />
+      <div class="actions">
+        <button id="save">Save</button>
+        <button id="done">Done</button>
+      </div>
+      <p id="status"></p>
+    </div>
     <script src="options.js"></script>
   </body>
 </html>
