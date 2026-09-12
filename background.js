@@ -1,11 +1,19 @@
 import { todayKey } from "./streak.js";
 import { adjustToday } from "./storage.js";
 
+const DEFAULT_GOAL = 3;
+
 async function paintBadge() {
-  const { days = {} } = await chrome.storage.local.get("days");
+  const { days = {}, goal = DEFAULT_GOAL } = await chrome.storage.local.get([
+    "days",
+    "goal",
+  ]);
   const count = days[todayKey(new Date())] || 0;
 
   chrome.action.setBadgeText({ text: count ? String(count) : "" });
+  chrome.action.setBadgeBackgroundColor({
+    color: count >= goal ? "#15803D" : "#777C82",
+  });
 }
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -17,7 +25,7 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === "local" && changes.days) {
+  if (areaName === "local" && (changes.days || changes.goal)) {
     paintBadge();
   }
 });
