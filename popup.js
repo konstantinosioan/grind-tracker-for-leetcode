@@ -1,16 +1,8 @@
 import { todayKey, currentStreak, recentDays } from "./streak.js";
+import { adjustToday } from "./storage.js";
 
 const DEFAULT_GOAL = 3;
 const RECENT_DAYS = 7;
-
-async function incrementToday() {
-  const { days = {} } = await chrome.storage.local.get("days");
-
-  const key = todayKey(new Date());
-  days[key] = (days[key] || 0) + 1;
-
-  await chrome.storage.local.set({ days });
-}
 
 function renderHistory(history) {
   const ul = document.querySelector("#history");
@@ -71,6 +63,11 @@ async function render() {
 render();
 
 document.querySelector("#add").addEventListener("click", async () => {
-  await incrementToday();
+  await adjustToday(1);
+  await render();
+});
+
+document.querySelector("#subtract").addEventListener("click", async () => {
+  await adjustToday(-1);
   await render();
 });

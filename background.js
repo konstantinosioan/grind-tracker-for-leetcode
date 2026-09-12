@@ -1,4 +1,5 @@
 import { todayKey } from "./streak.js";
+import { adjustToday } from "./storage.js";
 
 async function paintBadge() {
   const { days = {} } = await chrome.storage.local.get("days");
@@ -18,5 +19,11 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName === "local" && changes.days) {
     paintBadge();
+  }
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "accepted") {
+    adjustToday(1);
   }
 });
