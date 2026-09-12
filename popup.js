@@ -71,3 +71,7 @@ document.querySelector("#subtract").addEventListener("click", async () => {
   await adjustToday(-1);
   await render();
 });
+
+document.querySelector("#settings").addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
