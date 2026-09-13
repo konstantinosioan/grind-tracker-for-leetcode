@@ -14,7 +14,7 @@
     "default_popup": "popup.html",
     "default_title": "Grind Tracker for LeetCode"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "alarms"],
   "background": {
     "service_worker": "background.js",
     "type": "module"

@@ -11,6 +11,13 @@ const statusMessage = document.querySelector("#status");
 const dataStatus = document.querySelector("#dataStatus");
 let days = {};
 
+/**
+ * Loads the saved goal, day counts and difficulty tallies, then fills the
+ * goal box and draws the heatmap and difficulty breakdown. Runs on page open
+ * and again after an import
+ *
+ * @returns {Promise<void>}
+ */
 async function load() {
   const stored = await chrome.storage.local.get([
     "goal",
@@ -27,6 +34,13 @@ async function load() {
 
 load();
 
+/**
+ * Saves the goal if valid, then redraws the heatmap so the shading
+ * matches the new goal
+ *
+ * @returns {Promise<boolean>} whether the goal was valid and saved - the
+ *  Done button uses it to decide whether to close the page
+ */
 async function saveGoal() {
   const value = Number(goalInput.value);
 
@@ -48,6 +62,14 @@ document.querySelector("#done").addEventListener("click", async () => {
   }
 });
 
+/**
+ * Picks a heatmap shade from 0 to 4 for a day, based on its count against
+ * the goal: 0 for nothing, up to 4 for more than double the goal
+ *
+ * @param {number} count - problems solved that day
+ * @param {number} goal - the daily goal to measure against
+ * @returns {number} a shade level from 0 to 4
+ */
 function heatLevel(count, goal) {
   if (count > 2 * goal) return 4;
   if (count > goal) return 3;
@@ -56,6 +78,14 @@ function heatLevel(count, goal) {
   return 0;
 }
 
+/**
+ * Draws the activity heatmap: 26 weeks of days ending today, each cell
+ * shaded by that day's count against the goal, with the month range below it
+ *
+ * @param {Record<string, number>} days - solved counts keyed by "YYYY-MM-DD"
+ * @param {number} goal - the daily goal, used to shade each cell
+ * @param {Date} today - the most recent day shown; grid ends here
+ */
 function renderHeatmap(days, goal, today) {
   const heatmap = document.querySelector("#heatmap");
   heatmap.replaceChildren();
@@ -86,6 +116,12 @@ function renderHeatmap(days, goal, today) {
   range.textContent = `${format(start)} - ${format(today)}`;
 }
 
+/**
+ * Draws the difficulty breakdown as bars sized by each one's share of the
+ * total, or a short message when nothing's been recorded yet
+ *
+ * @param {Record<string, number>} difficulties - solved counts per difficulty
+ */
 function renderDifficulty(difficulties) {
   const difficulty = document.querySelector("#difficulty");
   difficulty.replaceChildren();
@@ -133,6 +169,12 @@ function renderDifficulty(difficulties) {
   }
 }
 
+/**
+ * Saves the current data (days, goal, difficulties, start date) to a JSON
+ * file the browser downloads, named with today's date and time
+ *
+ * @returns {Promise<void>}
+ */
 async function exportData() {
   const data = await chrome.storage.local.get([
     "days",
@@ -160,6 +202,14 @@ async function exportData() {
 
 document.querySelector("#export").addEventListener("click", exportData);
 
+/**
+ * Reads the file the user picked, checks if it's a valid export, and after
+ * confirming, replaces the stored data with it and redraws the page. Anything
+ * that goes wrong shows up in the status line
+ *
+ * @param {Event} event - the change event from the hidden file input
+ * @returns {Promise<void>}
+ */
 async function handleImport(event) {
   const input = event.target;
   const file = input.files[0];

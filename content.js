@@ -4,6 +4,11 @@ let awaitingVerdict = false;
 let verdictTimer = null;
 let pendingDifficulty = "unknown";
 
+/**
+ * Called when the user submits. Starts watching for a verdict, reads the
+ * problem's difficulty off the page and stops watching after 20 seconds
+ * so that a later visit to old submissions isn't counted
+ */
 function expectVerdict() {
   clearTimeout(verdictTimer);
   awaitingVerdict = true;
@@ -32,12 +37,14 @@ document.addEventListener(
   true,
 );
 
-// Listens for Leetcode's submit shortcut
+// Listens for LeetCode's submit shortcut
 document.addEventListener("keydown", (event) => {
   if ((event.metaKey || event.ctrlKey) && event.key === "Enter")
     expectVerdict();
 });
 
+// Watches the page for the submission result. Once it shows up while waiting,
+// stop watching and count it if it's Accepted.
 const mutationObserver = new MutationObserver(() => {
   if (!awaitingVerdict) return;
 
@@ -58,7 +65,7 @@ const mutationObserver = new MutationObserver(() => {
       });
     } catch {
       // nothing to do here: occurs when the extension is reloaded in production
-      // but the leetcode tab isn't reloaded so this script's context is dead
+      // but the LeetCode tab isn't reloaded so this script's context is dead
     }
   }
 });

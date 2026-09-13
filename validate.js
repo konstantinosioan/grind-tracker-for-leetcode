@@ -1,13 +1,37 @@
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/; // matches YYYY-MM-DD
 
+/**
+ * Checks for a plain object (not null and not an array)
+ *
+ * @param {unknown} x - the value to check
+ * @returns {boolean}
+ */
 const isPlainObject = (x) =>
   typeof x === "object" && x !== null && !Array.isArray(x);
+
+/**
+ * Checks for a non-negative whole number (a valid solved count)
+ *
+ * @param {unknown} v - the value to check
+ * @returns {boolean}
+ */
 const isCount = (v) => Number.isInteger(v) && v >= 0;
 
+/**
+ * Checks a parsed import file and returns a clean object with only the
+ * recognized keys (days, goal, difficulties, start date). Throws if the
+ * file is the wrong shape or version, if any field is invalid or if there's
+ * nothing to import
+ *
+ * @param {unknown} parsed - the result of JSON.parse on the import file
+ * @returns {object} the validated data, safe to save
+ * @throws {Error} with a short message describing what's wrong
+ */
 export function validateImport(parsed) {
   if (!isPlainObject(parsed)) throw new Error("Unrecognized file format.");
   if (parsed.version !== 1) throw new Error("Unsupported file version.");
 
+  // builds a fresh object so only known keys survive
   const clean = {};
 
   if ("days" in parsed) {

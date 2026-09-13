@@ -9,6 +9,12 @@ import { adjustToday } from "./storage.js";
 const DEFAULT_GOAL = 3;
 const RECENT_DAYS = 7;
 
+/**
+ * Turns a "YYYY-MM-DD" key into a short readable date like "Fri, Sep 12"
+ *
+ * @param {string} key - a day key in "YYYY-MM-DD" format
+ * @returns {string} the date formatted for display
+ */
 function formatDate(key) {
   const [year, month, day] = key.split("-");
   const date = new Date(Number(year), Number(month) - 1, Number(day));
@@ -20,6 +26,13 @@ function formatDate(key) {
   });
 }
 
+/**
+ * Fills the recent-history list with one row per day (date and count), or
+ * a short message when there's nothing to show yet
+ *
+ * @param {Array<{ date: string, count: number }>} history - the recent days to
+ * show, newest first
+ */
 function renderHistory(history) {
   const ul = document.querySelector("#history");
   ul.replaceChildren(); // clear to build fresh
@@ -43,6 +56,13 @@ function renderHistory(history) {
   }
 }
 
+/**
+ * Draws the whole popup from storage: today's progress and bar, the streak
+ * and best streak, the recent-history list, and the all-time total and best day.
+ * Runs on open and after each +1 / -1
+ *
+ * @returns {Promise<void>}
+ */
 async function render() {
   const now = new Date();
   const stored = await chrome.storage.local.get(["days", "goal", "startDate"]);
@@ -65,6 +85,7 @@ async function render() {
   document.querySelector("#streak").textContent =
     `Streak: ${streak} · Best: ${bestStreak}`;
 
+  // on first open, pin the start to today so history skips days before they began
   if (!startDate) {
     startDate = todayKey(now);
     await chrome.storage.local.set({ startDate });
