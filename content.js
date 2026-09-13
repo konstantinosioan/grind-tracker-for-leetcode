@@ -2,10 +2,17 @@
 // user submits and not when browsing old accepted submissions
 let awaitingVerdict = false;
 let verdictTimer = null;
+let pendingDifficulty = "unknown";
 
 function expectVerdict() {
   clearTimeout(verdictTimer);
   awaitingVerdict = true;
+
+  const el = document.querySelector('[class*="text-difficulty-"]');
+  const match = el
+    ?.getAttribute("class")
+    ?.match(/text-difficulty-(easy|medium|hard)/);
+  pendingDifficulty = match ? match[1] : "unknown";
 
   // If no verdict came, stop waiting so that if user browses submission
   // history after, it won't be miscounted
@@ -45,7 +52,10 @@ const mutationObserver = new MutationObserver(() => {
 
   if (el.textContent.trim() === "Accepted") {
     try {
-      chrome.runtime.sendMessage({ type: "accepted" });
+      chrome.runtime.sendMessage({
+        type: "accepted",
+        difficulty: pendingDifficulty,
+      });
     } catch {
       // nothing to do here: occurs when the extension is reloaded in production
       // but the leetcode tab isn't reloaded so this script's context is dead

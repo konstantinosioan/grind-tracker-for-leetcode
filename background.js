@@ -1,5 +1,5 @@
 import { todayKey } from "./streak.js";
-import { adjustToday } from "./storage.js";
+import { adjustToday, recordDifficulty } from "./storage.js";
 
 const DEFAULT_GOAL = 3;
 
@@ -33,5 +33,6 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === "accepted") {
     adjustToday(1);
+    recordDifficulty(message.difficulty);
   }
 });

@@ -3,20 +3,47 @@
   <head>
     <meta charset="utf-8" />
     <link href="styles.css" rel="stylesheet" />
-    <title>Grind Tracker for LeetCode - Options</title>
+    <title>Grind Tracker for LeetCode - Dashboard</title>
   </head>
 
   <body class="options">
+    <h1>Dashboard</h1>
     <div class="card">
-      <h1>Settings</h1>
       <label for="goal">Daily Goal</label>
       <input type="number" id="goal" min="1" />
-      <div class="actions">
-        <button id="save">Save</button>
-        <button id="done">Done</button>
-      </div>
+      <button id="save">Save</button>
       <p id="status"></p>
     </div>
-    <script src="options.js"></script>
+    <div class="card">
+      <h2>Activity</h2>
+      <div id="heatmap" class="heatmap"></div>
+      <div class="heatmap-footer">
+        <span id="heatmap-range"></span>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <span class="legend-cell lvl-0"></span>
+          <span class="legend-cell lvl-1"></span>
+          <span class="legend-cell lvl-2"></span>
+          <span class="legend-cell lvl-3"></span>
+          <span class="legend-cell lvl-4"></span>
+          <span>More</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Difficulty</h2>
+      <div id="difficulty"></div>
+    </div>
+    <div class="card">
+      <h2>Data</h2>
+      <div class="card-actions">
+        <button id="export">Export</button>
+        <button id="import">Import</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden />
+      <p id="dataStatus"></p>
+    </div>
+    <button id="done">Done</button>
+    <script type="module" src="options.js"></script>
   </body>
 </html>
