@@ -187,6 +187,12 @@ async function handleImport(event) {
 
     const clean = validateImport(parsed);
 
+    // if the file has no start date, use the first imported day
+    if (clean.days && clean.startDate === undefined) {
+      const earliest = Object.keys(clean.days).sort()[0];
+      if (earliest) clean.startDate = earliest;
+    }
+
     if (!confirm("This will replace your current data. Continue?")) return;
 
     await chrome.storage.local.set(clean);
