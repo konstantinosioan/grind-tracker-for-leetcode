@@ -86,6 +86,7 @@ grind-tracker-for-leetcode/
 ├── validate.test.js   # Tests for the import validator
 ├── icons/             # Toolbar and store icons (16/32/48/128), made in Figma
 ├── API.md             # Generated JSDoc reference
+├── PRIVACY.md         # Privacy policy
 ├── eslint.config.js   # ESLint flat config
 ├── package.json       # Dev tooling and scripts (no runtime dependencies)
 └── .github/
@@ -107,6 +108,10 @@ CI runs all three on every push.
 ## Documentation
 
 Every top-level function is documented with JSDoc, and a generated reference lives in [`API.md`](API.md). It renders right here on GitHub, no clone needed.
+
+## Privacy
+
+The extension collects nothing and sends nothing off your device. Everything stays in `chrome.storage.local`. See [PRIVACY.md](PRIVACY.md) for the full policy.
 
 ## License
 

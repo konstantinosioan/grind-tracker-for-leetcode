@@ -2,7 +2,7 @@
   "name": "Grind Tracker for LeetCode",
   "short_name": "Grind Track",
   "description": "Track your daily LeetCode solves, hit a daily goal & keep your streak going!",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "manifest_version": 3,
   "icons": {
     "16": "icons/icon-16.png",
