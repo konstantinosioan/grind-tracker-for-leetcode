@@ -5,6 +5,8 @@
 
 A Chrome and Edge extension that counts the LeetCode problems you solve, tracks the day's total against a goal you set, and keeps a streak going. Your progress shows in the popup and on the toolbar badge. It logs automatically when you get an Accepted submission, with a manual button as a fallback.
 
+**Install:** [Chrome Web Store](https://chromewebstore.google.com/detail/grind-tracker-for-leetcod/ikieaehmdphckafdcdkngonjcmdkafna) · [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/grind-tracker-for-leetcod/nklolpibbpjnffncboacaafblckjpped)
+
 Built to keep myself consistent with a daily LeetCode goal.
 
 _Not affiliated with or endorsed by LeetCode._
@@ -30,7 +32,7 @@ The dashboard (options page): a 26-week heatmap, the difficulty breakdown, and e
 - **Dashboard**: a 26-week activity heatmap, an easy/medium/hard breakdown, and export/import, all on the options page.
 - **Local only**: everything lives in `chrome.storage.local`. No account, no server, nothing leaves your machine.
 
-## Install
+## Install from source
 
 The same package runs on Chrome, Edge and other Chromium browsers.
 
