@@ -50,7 +50,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      # -MM fails on a missing file; plain zip only warns and would ship a broken package
+      # New source files must be added here. -MM fails on a missing file; plain zip only
+      # warns and would ship a broken package
       - name: Build the extension package
         run: |
           zip -rMM extension.zip manifest.json background.js content.js \
@@ -84,9 +85,9 @@ jobs:
           description: |
             **Repository:** ${{ github.repository }}
             **Branch:** ${{ github.head_ref || github.ref_name }}
-            **Message:** ${{ github.event.head_commit.message }}
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.event.head_commit.author.name }}
+            **Message:** ${{ github.event.head_commit.message }}
             [View Commit](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
@@ -106,9 +107,9 @@ jobs:
           description: |
             **Repository:** ${{ github.repository }}
             **Branch:** ${{ github.head_ref || github.ref_name }}
-            **Message:** ${{ github.event.head_commit.message || github.event.pull_request.title }}
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
+            **Message:** ${{ github.event.head_commit.message || github.event.pull_request.title }}
             [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   tag_release:

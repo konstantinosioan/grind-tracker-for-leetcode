@@ -93,7 +93,7 @@ grind-tracker-for-leetcode/
 ├── package.json       # Dev tooling and scripts (no runtime dependencies)
 └── .github/
     └── workflows/
-        └── ci.yml     # Tests, format and lint checks on every push
+        └── ci.yml     # Deployment pipeline: checks on PRs, uploads to the store on merge
 ```
 
 ## Development
@@ -105,7 +105,7 @@ npm run lint          # ESLint
 npm run format:check  # Prettier
 ```
 
-CI runs all three on every push.
+CI runs all three on every pull request and on pushes to `main`.
 
 ## Documentation
 
