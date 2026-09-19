@@ -1,22 +1,25 @@
-name: Continuous Integration
+name: Deployment pipeline
 
 on:
   push:
-  workflow_dispatch:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
-  test:
-    name: Run tests and linters
+  build_and_test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 10
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: "npm"
@@ -35,3 +38,91 @@ jobs:
       - name: Lint with ESLint
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run lint
+
+  deploy:
+    needs: [build_and_test]
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      # -MM fails on a missing file; plain zip only warns and would ship a broken package
+      - name: Build the extension package
+        run: |
+          zip -rMM extension.zip manifest.json background.js content.js \
+            options.html options.js popup.html popup.js storage.js \
+            streak.js styles.css validate.js icons
+
+      - name: Upload the package to the Chrome Web Store
+        uses: mnao305/chrome-extension-upload@f549d5d654694a7722d6abfa64c97409ad5e64c1 # v7.0.0
+        with:
+          file-path: extension.zip
+          extension-id: ${{ secrets.CWS_EXTENSION_ID }}
+          publisher-id: ${{ secrets.CWS_PUBLISHER_ID }}
+          client-id: ${{ secrets.CWS_CLIENT_ID }}
+          client-secret: ${{ secrets.CWS_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CWS_REFRESH_TOKEN }}
+          # Publishing submits for review, which blocks further uploads until it clears
+          publish: false
+
+  notify_success:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          nofail: false
+          nocontext: true
+          status: Success
+          title: "Package uploaded"
+          color: 0x00ff00
+          description: |
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.head_ref || github.ref_name }}
+            **Message:** ${{ github.event.head_commit.message }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.event.head_commit.author.name }}
+            [View Commit](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+  notify_failure:
+    needs: [build_and_test, deploy, tag_release]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          nofail: false
+          nocontext: true
+          status: Failure
+          title: "Pipeline failed"
+          color: 0xff0000
+          description: |
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.head_ref || github.ref_name }}
+            **Message:** ${{ github.event.head_commit.message || github.event.pull_request.title }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+  tag_release:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Tag the manifest version
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./manifest.json').version")
+          git tag "v$version"
+          git push origin "v$version"
